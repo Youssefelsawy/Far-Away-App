@@ -29,7 +29,7 @@ export default function App() {
         onDeleteItem={handleDeleteItem}
         onUpdateItem={handleUpdateItem}
       />
-      <Stats />
+      <Stats items={items} />
     </div>
   );
 }
@@ -115,10 +115,17 @@ function Item({ item, onDeleteItem, onUpdateItem }) {
   );
 }
 
-function Stats() {
+function Stats({ items }) {
+  const numItems = items.length;
+  const packedItems = items.filter((item) => item.packed).length;
+  const percentage = Math.round((packedItems / numItems) * 100) || 0;
   return (
     <footer className="stats">
-      <em> 💼 You have X items on your list and you already packed X (X%)</em>
+      <em>
+        {percentage === 100
+          ? "Masha2llah you got everything! Have a safe flight ✈️🎉"
+          : `💼 You have ${numItems} items on your list and you already packed ${packedItems} (${percentage}%)`}
+      </em>
     </footer>
   );
 }
