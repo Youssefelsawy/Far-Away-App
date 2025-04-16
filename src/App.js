@@ -83,10 +83,30 @@ function Form({ onAddItem }) {
 }
 
 function PackingList({ items, onDeleteItem, onUpdateItem }) {
+  const [sortBy, setSortBy] = useState("input");
+
+  let sortedItems; // derived state
+  // derived state is a state that is calculated from other state
+  // it is not stored in the state, but it is calculated from the state
+
+  if (sortBy === "input") sortedItems = items;
+
+  if (sortBy === "description") {
+    sortedItems = items
+      .slice()
+      .sort((a, b) => a.description.localeCompare(b.description));
+  }
+
+  if (sortBy === "packed") {
+    sortedItems = items
+      .slice()
+      .sort((a, b) => Number(a.packed) - Number(b.packed));
+  }
+
   return (
     <div className="list">
       <ul>
-        {items.map((item) => (
+        {sortedItems.map((item) => (
           <Item
             item={item}
             key={item.id}
@@ -95,6 +115,12 @@ function PackingList({ items, onDeleteItem, onUpdateItem }) {
           />
         ))}
       </ul>
+
+      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <option value="input">Sort by input order</option>
+        <option value="description">Sort by description</option>
+        <option value="packed">Sort by packed status</option>
+      </select>
     </div>
   );
 }
@@ -123,9 +149,13 @@ function Stats({ items }) {
       </footer>
     );
 
-  const numItems = items.length;
-  const packedItems = items.filter((item) => item.packed).length;
+  const numItems = items.length; // derived state
+  // derived state is a state that is calculated from other state
+  // it is not stored in the state, but it is calculated from the state
+  const packedItems = items.filter((item) => item.packed).length; // derived state
+
   const percentage = Math.round((packedItems / numItems) * 100) || 0;
+
   return (
     <footer className="stats">
       <em>
